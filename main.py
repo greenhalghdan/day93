@@ -11,8 +11,9 @@ from webdriver_manager.firefox import GeckoDriverManager
 #fire fox options
 
 options = FirefoxOptions()
-options.add_argument("-headless")
-driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+# options.add_argument("-headless")
+driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+# driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
 fire_fox_driver = Service('.\geckodriver')
 
 #chrome options
@@ -36,14 +37,37 @@ sleep(5)
 
 driver.find_element(By.CSS_SELECTOR, 'button[id="onetrust-reject-all-handler"]').click()
 sleep(1)
-
-driver.find_element(By.CSS_SELECTOR, 'input[name="typeAheadInputField"]').send_keys('Ipswich, Suffolk')
+searchlocation = input("Where would you like to search? ")
+driver.find_element(By.CSS_SELECTOR, 'input[name="typeAheadInputField"]').send_keys(searchlocation)
 driver.find_element(By.XPATH, '/html/body/div[1]/div[2]/main/div[1]/div/div/div/button[1]').click()
 sleep(2)
+print("1. houses")
+print("2. flats")
+print("3. bungalows")
+choosing = True
+while choosing:
+    property_type = input("What type of property are you looking for:[1/2/3] ")
+    if property_type == '1':
+        buildingtype = 'houses'
+
+        choosing = False
+    elif property_type == '2':
+        buildingtype = 'flats'
+        print(buildingtype)
+        choosing = False
+    elif property_type == '3':
+        buildingtype = 'bungalows'
+        choosing = False
+    else:
+        print("thats not a valid option try again")
+
+
 property_type = driver.find_element(By.ID, 'displayPropertyType')
-property_type.find_element(By.CSS_SELECTOR, 'option[value="houses"]').click()
+newbuildingtype = f'option[value="{buildingtype}"]'
+property_type.find_element(By.CSS_SELECTOR, newbuildingtype).click()
 number_bedrooms = driver.find_element(By.ID, 'minBedrooms')
-number_bedrooms.find_element(By.CSS_SELECTOR, 'option[value="3"]').click()
+minnumberofbedrooms = input("What is your minimum number of bed rooms?[0-5] ")
+number_bedrooms.find_element(By.CSS_SELECTOR, f'option[value="{minnumberofbedrooms}"]').click()
 driver.find_element(By.ID, 'submit').click()
 
 # Scrape data of houses from page
